@@ -1,0 +1,174 @@
+{
+  "properties": {
+    "connectionReferences": {
+      "shared_commondataserviceforapps": {
+        "runtimeSource": "embedded",
+        "connection": {
+          "connectionReferenceLogicalName": "jo_sharedcommondataserviceforapps_89d09"
+        },
+        "api": {
+          "name": "shared_commondataserviceforapps"
+        }
+      }
+    },
+    "definition": {
+      "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+      "contentVersion": "1.0.0.0",
+      "parameters": {
+        "$connections": {
+          "defaultValue": {},
+          "type": "Object"
+        },
+        "$authentication": {
+          "defaultValue": {},
+          "type": "SecureObject"
+        }
+      },
+      "triggers": {
+        "manual": {
+          "metadata": {
+            "operationMetadataId": "007fd650-2c07-4ff4-ade9-87a8b8098481"
+          },
+          "type": "Request",
+          "kind": "Button",
+          "inputs": {
+            "schema": {
+              "type": "object",
+              "properties": {},
+              "required": []
+            }
+          }
+        }
+      },
+      "actions": {
+        "Min_Rows": {
+          "runAfter": {},
+          "metadata": {
+            "operationMetadataId": "4ef1c35a-aee5-44b9-891a-484a31e9fcbf"
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "connectionName": "shared_commondataserviceforapps",
+              "operationId": "ListRecords",
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+            },
+            "parameters": {
+              "entityName": "cr886_weather_recordses",
+              "$select": "cr886_actual_min_temp",
+              "$orderby": "cr886_actual_min_temp desc",
+              "$top": 1
+            },
+            "authentication": {
+              "type": "Raw",
+              "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']"
+            }
+          }
+        },
+        "Max_Rows": {
+          "runAfter": {},
+          "metadata": {
+            "operationMetadataId": "adab1bff-7b3f-4ee0-b3f6-332038d26af3"
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "connectionName": "shared_commondataserviceforapps",
+              "operationId": "ListRecords",
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+            },
+            "parameters": {
+              "entityName": "cr886_weather_recordses",
+              "$select": "cr886_actual_max_temp",
+              "$orderby": "cr886_actual_max_temp desc",
+              "$top": 1
+            },
+            "authentication": {
+              "type": "Raw",
+              "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']"
+            }
+          }
+        },
+        "Record_High_Variable": {
+          "runAfter": {
+            "Max_Rows": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "62be338c-048c-432c-82f6-a70153be5f57"
+          },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "Record High",
+                "type": "integer",
+                "value": "@first(outputs('Max_Rows')?['body']?['value'])?['cr886_actual_max_temp']"
+              }
+            ]
+          }
+        },
+        "Record_Low_Variable": {
+          "runAfter": {
+            "Min_Rows": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "18add858-646f-4dac-bc19-c4c147e81453"
+          },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "Record Low",
+                "type": "integer",
+                "value": "@first(outputs('Min_Rows')?['body']?['value'])?['cr886_actual_min_temp']"
+              }
+            ]
+          }
+        },
+        "Respond_to_a_PowerApp_or_flow": {
+          "runAfter": {
+            "Record_Low_Variable": [
+              "Succeeded"
+            ],
+            "Record_High_Variable": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "ca6e3114-cdfb-4ff0-8ac5-6dffa3ec9b19"
+          },
+          "type": "Response",
+          "kind": "PowerApp",
+          "inputs": {
+            "statusCode": 200,
+            "body": {
+              "record_low": "@{variables('Record Low')}",
+              "record_high": "@{variables('Record High')}"
+            },
+            "schema": {
+              "type": "object",
+              "properties": {
+                "record_low": {
+                  "title": "Record Low",
+                  "x-ms-dynamically-added": true,
+                  "type": "number"
+                },
+                "record_high": {
+                  "title": "Record High",
+                  "x-ms-dynamically-added": true,
+                  "type": "number"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "templateName": ""
+  },
+  "schemaVersion": "1.0.0.0"
+}

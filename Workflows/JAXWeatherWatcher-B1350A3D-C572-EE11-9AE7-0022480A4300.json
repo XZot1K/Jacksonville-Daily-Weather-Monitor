@@ -1,0 +1,104 @@
+{
+  "properties": {
+    "connectionReferences": {
+      "shared_msnweather": {
+        "runtimeSource": "embedded",
+        "connection": {
+          "connectionReferenceLogicalName": "jo_sharedmsnweather_5e5cb"
+        },
+        "api": {
+          "name": "shared_msnweather"
+        }
+      },
+      "shared_commondataserviceforapps": {
+        "runtimeSource": "embedded",
+        "connection": {
+          "connectionReferenceLogicalName": "jo_sharedcommondataserviceforapps_89d09"
+        },
+        "api": {
+          "name": "shared_commondataserviceforapps"
+        }
+      }
+    },
+    "definition": {
+      "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+      "contentVersion": "1.0.0.0",
+      "parameters": {
+        "$connections": {
+          "defaultValue": {},
+          "type": "Object"
+        },
+        "$authentication": {
+          "defaultValue": {},
+          "type": "SecureObject"
+        }
+      },
+      "triggers": {
+        "Recurrence": {
+          "recurrence": {
+            "frequency": "Day",
+            "interval": 1,
+            "timeZone": "Eastern Standard Time",
+            "schedule": {
+              "hours": [
+                "9"
+              ]
+            }
+          },
+          "metadata": {
+            "operationMetadataId": "230a075e-c3cd-4322-a995-c20d15bca1c3"
+          },
+          "type": "Recurrence"
+        }
+      },
+      "actions": {
+        "Get_forecast_for_today_in_JAX": {
+          "runAfter": {},
+          "metadata": {
+            "operationMetadataId": "dcac4351-618d-491a-8c82-b6060d0b7b5f"
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "connectionName": "shared_msnweather",
+              "operationId": "TodaysForecast",
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_msnweather"
+            },
+            "parameters": {
+              "Location": "32218",
+              "units": "I"
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        },
+        "Add_a_new_weather_record": {
+          "runAfter": {
+            "Get_forecast_for_today_in_JAX": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "a4eabef2-c15b-416c-9b9a-9c6dc8402a8f"
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "connectionName": "shared_commondataserviceforapps",
+              "operationId": "CreateRecord",
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+            },
+            "parameters": {
+              "entityName": "cr886_weather_recordses",
+              "item/cr886_actual_max_temp": "@outputs('Get_forecast_for_today_in_JAX')?['body/responses/daily/tempHi']",
+              "item/cr886_actual_min_temp": "@outputs('Get_forecast_for_today_in_JAX')?['body/responses/daily/tempLo']",
+              "item/cr886_date": "@outputs('Get_forecast_for_today_in_JAX')?['body/responses/daily/valid']"
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        }
+      }
+    },
+    "templateName": ""
+  },
+  "schemaVersion": "1.0.0.0"
+}

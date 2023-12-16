@@ -1,0 +1,299 @@
+{
+  "properties": {
+    "connectionReferences": {
+      "shared_office365": {
+        "runtimeSource": "embedded",
+        "connection": {
+          "connectionReferenceLogicalName": "jo_sharedoffice365_19c1a"
+        },
+        "api": {
+          "name": "shared_office365"
+        }
+      },
+      "shared_commondataserviceforapps": {
+        "runtimeSource": "embedded",
+        "connection": {
+          "connectionReferenceLogicalName": "jo_sharedcommondataserviceforapps_89d09"
+        },
+        "api": {
+          "name": "shared_commondataserviceforapps"
+        }
+      }
+    },
+    "definition": {
+      "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+      "contentVersion": "1.0.0.0",
+      "parameters": {
+        "$connections": {
+          "defaultValue": {},
+          "type": "Object"
+        },
+        "$authentication": {
+          "defaultValue": {},
+          "type": "SecureObject"
+        }
+      },
+      "triggers": {
+        "When_a_row_is_added,_modified_or_deleted": {
+          "metadata": {
+            "operationMetadataId": "cce403ec-6798-437e-8543-d9deacc9e568"
+          },
+          "type": "OpenApiConnectionWebhook",
+          "inputs": {
+            "host": {
+              "connectionName": "shared_commondataserviceforapps",
+              "operationId": "SubscribeWebhookTrigger",
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+            },
+            "parameters": {
+              "subscriptionRequest/message": 4,
+              "subscriptionRequest/entityname": "cr886_weather_records",
+              "subscriptionRequest/scope": 2,
+              "subscriptionRequest/filteringattributes": "cr886_actual_min_temp,cr886_actual_max_temp"
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        }
+      },
+      "actions": {
+        "Check_for_a_Record_High_or_Low": {
+          "actions": {
+            "Try_to_create_alert": {
+              "actions": {
+                "Check_if_user_has_alerts_enabled_and_the_email_is_not_empty": {
+                  "actions": {
+                    "Send_Alert_Email": {
+                      "runAfter": {},
+                      "metadata": {
+                        "operationMetadataId": "aebd5623-61ef-4509-9948-3614560b0a68"
+                      },
+                      "type": "OpenApiConnection",
+                      "inputs": {
+                        "host": {
+                          "connectionName": "shared_office365",
+                          "operationId": "SendEmailV2",
+                          "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365"
+                        },
+                        "parameters": {
+                          "emailMessage/To": "@outputs('Get_Owner')?['body/jo_email']",
+                          "emailMessage/Subject": "Weather Alert - @{triggerOutputs()?['body/cr886_date']}",
+                          "emailMessage/Body": "<img src=\"https://lh3.googleusercontent.com/pw/ADCreHesujeyWALEjys_3fWYdIMXq3PzVCQcYEWkp4KoQ8zEfK4tG25HGVUrj-Xkl0q9pbK7TDiq7tdwcKFbrQVdWZ5iup_gl7mHoCLKo5PEiLUGgaHq_aOsCp0_4GhNd9_TSZQWj-z3G7dofwnt1HMBTQn_7OPA1WMWD0EtuPRuleqb9FqTkhCEh6qpVMEx-HUOSZQ_OmsVxDB8Dkl_3kGBLfwz_8Gyrd7kxO1kOKVzUiLuaNdlyVEO7MFuJFHtwGj3AJ64_-nwzWMZVpT2KbOf_vp7G2TTPsjpgr-V0sm_RvI9BIpGrkdYlCbDe9vTbr2mSPHM-2gii1seUd8n459cTceguFlAr79bO5MwhEOuRW3ucXqby4RTZH8VYtTdZXQXven8klMXCWdDpr2AXFXKh0B2q-tM6bu1t4tTK_z4WRB9oMQr_1zKFWipTC3aoXWAvjW9NKEjw8m-pteLmvroKNpATVUeUQoxlR8kT6whQekwxFPgS1DFLycgdGiHPODSgnsxsp-c8rA266SxW5f7EOe-A_hegy4gsjauIdes4xXO0LjaXqercugC_X7S1L5gmfVjKLCOcQDZ49ONiMl-tarW1JPLd54ywij8glOoKVBVVNpsZY-9B6FkiqUhVcTZ--4lXATrAhfQsHf5qu7B8s5Lc-aIjmuEYgE6zYcaDTRyli-MKdDndY2wnGojcsSoSNHOQH7K7aUFbPxPn1hXtcT0p9dOp0lscMp9X8fnVgemPjDssdfpQG317GFoLJN-R-sMRRJCDPtV1qtKkPmAguJs3LQwSfui1JgVPgfA6PeeIuraM3Y0ipziZP4220ZyCHPON7JirMQlRaK79AWdkkj1xD0liLTJhcd7vyr8Y2V4wUEhAZfO74GZYtugOqNewhZ1BqChvBbYo6I8R1z5Ltg=w64-h62-s-no-gm?authuser=0\"/>\n<p><span style=\"font-family: verdana\"><strong></strong></span><span style=\"font-family: verdana\"><strong>@{outputs('Get_Owner')?['body/jo_name']}</strong></span><span style=\"font-family: verdana\"><strong>, </strong></span><span style=\"font-family: verdana\">A new weather alert record was created.<br>\n<br>\n</span><span style=\"font-family: verdana\"><u><strong>Record Details</strong></u></span><span style=\"font-family: verdana\"><strong>:</strong></span><span style=\"font-family: verdana\"><br>\n<br>\n&nbsp;&nbsp;</span><span style=\"font-family: verdana\"><strong>&nbsp;</strong></span><span style=\"font-family: verdana\"><strong>@{triggerOutputs()?['body/cr886_actual_min_temp']}°F</strong></span><span style=\"font-family: verdana\"><strong> </strong></span><span style=\"font-family: verdana\">Minimum and </span><span style=\"font-family: verdana\"><strong></strong></span><span style=\"font-family: verdana\"><strong>@{triggerOutputs()?['body/cr886_actual_max_temp']}°F</strong></span><span style=\"font-family: verdana\"><strong></strong></span><span style=\"font-family: verdana\"> Maxiumum.<br>\n&nbsp;&nbsp;<br>\n&nbsp;&nbsp;The record then states the temperature mean is </span><span style=\"font-family: verdana\"><strong></strong></span><span style=\"font-family: verdana\"><strong>@{triggerOutputs()?['body/cr886_actual_mean_temp']}°F</strong></span><span style=\"font-family: verdana\"><strong></strong></span><span style=\"font-family: verdana\">.</span></p>",
+                          "emailMessage/Importance": "Normal"
+                        },
+                        "authentication": "@parameters('$authentication')"
+                      }
+                    }
+                  },
+                  "runAfter": {
+                    "Get_Owner": [
+                      "Succeeded"
+                    ]
+                  },
+                  "expression": {
+                    "and": [
+                      {
+                        "equals": [
+                          "@outputs('Get_Owner')?['body/jo_alertemails']",
+                          true
+                        ]
+                      },
+                      {
+                        "greater": [
+                          "@length(outputs('Get_Owner')?['body/jo_email'])",
+                          0
+                        ]
+                      }
+                    ]
+                  },
+                  "metadata": {
+                    "operationMetadataId": "40cf39a1-e9f0-4b2e-bd26-c497224d346c"
+                  },
+                  "type": "If"
+                },
+                "Get_Owner": {
+                  "runAfter": {
+                    "Get_row_id_that_belong's_to_user": [
+                      "Succeeded"
+                    ]
+                  },
+                  "metadata": {
+                    "operationMetadataId": "8bbc077a-9021-48e6-9e51-88e901225954"
+                  },
+                  "type": "OpenApiConnection",
+                  "inputs": {
+                    "host": {
+                      "connectionName": "shared_commondataserviceforapps",
+                      "operationId": "GetItem",
+                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+                    },
+                    "parameters": {
+                      "entityName": "jo_useraccounts",
+                      "recordId": "@first(outputs('Get_row_id_that_belong''s_to_user')?['body/value'])?['jo_useraccountid']"
+                    },
+                    "authentication": "@parameters('$authentication')"
+                  }
+                },
+                "Get_row_id_that_belong's_to_user": {
+                  "runAfter": {},
+                  "metadata": {
+                    "operationMetadataId": "1ba79c0d-923a-48f7-87f3-806cf8d1cd61"
+                  },
+                  "type": "OpenApiConnection",
+                  "inputs": {
+                    "host": {
+                      "connectionName": "shared_commondataserviceforapps",
+                      "operationId": "ListRecords",
+                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+                    },
+                    "parameters": {
+                      "entityName": "jo_useraccounts",
+                      "$filter": "jo_ownerid eq '@{triggerOutputs()?['body/_ownerid_value']}'",
+                      "$top": 1
+                    },
+                    "authentication": "@parameters('$authentication')"
+                  }
+                }
+              },
+              "runAfter": {},
+              "metadata": {
+                "operationMetadataId": "5c1c6397-26dd-4847-b374-0ca036ce84c3"
+              },
+              "type": "Scope"
+            },
+            "Catch": {
+              "actions": {
+                "Send_Warning_In-App_Notification": {
+                  "runAfter": {},
+                  "metadata": {
+                    "operationMetadataId": "a11b9941-d65a-47eb-bb62-efb5060b2a57"
+                  },
+                  "type": "OpenApiConnection",
+                  "inputs": {
+                    "host": {
+                      "connectionName": "shared_commondataserviceforapps",
+                      "operationId": "CreateRecord",
+                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+                    },
+                    "parameters": {
+                      "entityName": "appnotifications",
+                      "item/title": "No Alert Email Configured",
+                      "item/body": "Please create a user to configure an email to receive alerts.",
+                      "item/icontype": 100000003,
+                      "item/priority": 200000001
+                    },
+                    "authentication": "@parameters('$authentication')"
+                  }
+                }
+              },
+              "runAfter": {
+                "Try_to_create_alert": [
+                  "Failed"
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "fc187e45-0a63-4cf9-b97d-3f586f69f2f6"
+              },
+              "type": "Scope"
+            }
+          },
+          "runAfter": {
+            "Get_Highs_and_Lows": [
+              "Succeeded"
+            ]
+          },
+          "expression": {
+            "or": [
+              {
+                "greater": [
+                  "@triggerOutputs()?['body/cr886_actual_max_temp']",
+                  "@int(outputs('Get_Highs_and_Lows')?['Body']?['record_high'])"
+                ]
+              },
+              {
+                "less": [
+                  "@triggerOutputs()?['body/cr886_actual_min_temp']",
+                  "@int(outputs('Get_Highs_and_Lows')?['Body']?['record_low'])"
+                ]
+              }
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "8b36c83f-560e-46f1-8ed6-e546e98ab208"
+          },
+          "type": "If"
+        },
+        "Get_Highs_and_Lows": {
+          "runAfter": {},
+          "metadata": {
+            "operationMetadataId": "f5ae2a4e-79ed-4f9f-bb0b-db10d1a2045c"
+          },
+          "type": "Workflow",
+          "inputs": {
+            "host": {
+              "workflowReferenceName": "3072ffc4-c672-ee11-9ae7-0022480a4300"
+            }
+          }
+        },
+        "Add_alert_record": {
+          "runAfter": {
+            "Check_for_a_Record_High_or_Low": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "add86ed7-33c0-4e8b-a79e-909bcda82e8a"
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "connectionName": "shared_commondataserviceforapps",
+              "operationId": "CreateRecord",
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+            },
+            "parameters": {
+              "entityName": "jo_alerts",
+              "item/jo_date": "@guid()",
+              "item/jo_actualmax": "@triggerOutputs()?['body/cr886_actual_max_temp']",
+              "item/jo_actualmin": "@triggerOutputs()?['body/cr886_actual_min_temp']"
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        },
+        "Mean_of_the_Min_and_Max": {
+          "runAfter": {},
+          "metadata": {
+            "operationMetadataId": "2ae6f767-0811-4d04-88ae-508675ad8ca1"
+          },
+          "type": "Compose",
+          "inputs": "@div(add(triggerOutputs()?['body/cr886_actual_min_temp'], triggerOutputs()?['body/cr886_actual_max_temp']), 2)"
+        },
+        "Update_Temp_Mean": {
+          "runAfter": {
+            "Mean_of_the_Min_and_Max": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "9b5af4f8-6ba0-4c4c-8b40-1630b106dbb2"
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "connectionName": "shared_commondataserviceforapps",
+              "operationId": "UpdateRecord",
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+            },
+            "parameters": {
+              "entityName": "cr886_weather_recordses",
+              "recordId": "@triggerOutputs()?['body/cr886_weather_recordsid']",
+              "item/cr886_actual_mean_temp": "@outputs('Mean_of_the_Min_and_Max')"
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        }
+      }
+    },
+    "templateName": ""
+  },
+  "schemaVersion": "1.0.0.0"
+}
