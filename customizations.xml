@@ -5350,11 +5350,11 @@
   <CanvasApps>
     <CanvasApp>
       <Name>jo_jaxweathermonitor_7b7af</Name>
-      <AppVersion>2023-12-03T20:35:50Z</AppVersion>
+      <AppVersion>2024-01-03T20:55:13Z</AppVersion>
       <Status>Ready</Status>
-      <CreatedByClientVersion>3.23105.18.0</CreatedByClientVersion>
-      <MinClientVersion>3.23105.18.0</MinClientVersion>
-      <Tags>{"primaryDeviceWidth":"1366","primaryDeviceHeight":"768","supportsPortrait":"true","supportsLandscape":"true","primaryFormFactor":"Tablet","showStatusBar":"false","publisherVersion":"3.23105.18","minimumRequiredApiVersion":"2.2.0","hasComponent":"false","hasUnlockedComponent":"false","isUnifiedRootApp":"false","sienaVersion":"20231203T203051Z-3.23105.18.0","offlineLargeFilesSupport":"false"}</Tags>
+      <CreatedByClientVersion>3.23122.17.0</CreatedByClientVersion>
+      <MinClientVersion>3.23122.17.0</MinClientVersion>
+      <Tags>{"primaryDeviceWidth":"1366","primaryDeviceHeight":"768","supportsPortrait":"true","supportsLandscape":"true","primaryFormFactor":"Tablet","showStatusBar":"false","publisherVersion":"3.23122.17","minimumRequiredApiVersion":"2.2.0","hasComponent":"false","hasUnlockedComponent":"false","isUnifiedRootApp":"false","sienaVersion":"20240103T204509Z-3.23122.17.0","offlineLargeFilesSupport":"false"}</Tags>
       <IsCdsUpgraded>0</IsCdsUpgraded>
       <GalleryItemId xsi:nil="true"></GalleryItemId>
       <BackgroundColor>RGBA(0,176,240,1)</BackgroundColor>
@@ -5377,6 +5377,9 @@
       <IsCustomizable>1</IsCustomizable>
       <BackgroundImageUri>/CanvasApps/jo_jaxweathermonitor_7b7af_BackgroundImageUri</BackgroundImageUri>
       <DocumentUri>/CanvasApps/jo_jaxweathermonitor_7b7af_DocumentUri.msapp</DocumentUri>
+      <AdditionalUris>
+        <AdditionalUri>/CanvasApps/jo_jaxweathermonitor_7b7af_AdditionalUris0_identity.json</AdditionalUri>
+      </AdditionalUris>
     </CanvasApp>
   </CanvasApps>
   <Languages>

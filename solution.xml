@@ -1,4 +1,4 @@
-<ImportExportXml version="9.2.23104.248" SolutionPackageVersion="9.2" languagecode="1033" generatedBy="CrmLive" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<ImportExportXml version="9.2.23111.246" SolutionPackageVersion="9.2" languagecode="1033" generatedBy="CrmLive" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <SolutionManifest>
     <UniqueName>JAXDailyWeatherMonitorCanvas</UniqueName>
     <LocalizedNames>
@@ -7,7 +7,7 @@
     <Descriptions>
       <Description description="A weather (temperature) monitoring app created to keep record of temperature changes in Jacksonville, FL within a modifiable dataverse." languagecode="1033" />
     </Descriptions>
-    <Version>1.0.0.1</Version>
+    <Version>1.0.0.2</Version>
     <Managed>0</Managed>
     <Publisher>
       <UniqueName>XZot1K</UniqueName>
@@ -90,11 +90,11 @@
     </RootComponents>
     <MissingDependencies>
       <MissingDependency>
-        <Required type="1" schemaName="appnotification" displayName="Notification" solution="AppNotifications (10.0.0.14)" />
+        <Required type="1" schemaName="appnotification" displayName="Notification" solution="AppNotifications (10.0.0.15)" />
         <Dependent type="29" displayName="Weather Record Update" id="{fb897118-9e72-ee11-9ae7-0022480a4300}" />
       </MissingDependency>
       <MissingDependency>
-        <Required type="66" schemaName="MscrmControls.FieldControls.ToggleControl" displayName="MscrmControls.FieldControls.ToggleControl" solution="BaseCustomControlsCore (9.0.2310.4022)" />
+        <Required type="66" schemaName="MscrmControls.FieldControls.ToggleControl" displayName="MscrmControls.FieldControls.ToggleControl" solution="BaseCustomControlsCore (9.0.2311.1025)" />
         <Dependent type="60" displayName="Information" parentDisplayName="User" id="{b12d30de-a190-4806-8f8e-c7e6605a1362}" />
       </MissingDependency>
       <MissingDependency>
