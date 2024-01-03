@@ -1,5 +1,5 @@
 # Jacksonville-Daily-Weather-Monitor
-
+A weather (temperature) monitoring app created to keep record of temperature changes in Jacksonville, FL within a modifiable dataverse.
 # General UI
 -----
 ![Screenshot 2024-01-03 155612](https://github.com/XZot1K/Jacksonville-Daily-Weather-Monitor/assets/16107830/cb11a055-cab8-41b4-987f-e95c9fe9a902)
